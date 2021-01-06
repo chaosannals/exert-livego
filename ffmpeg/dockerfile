@@ -1,0 +1,21 @@
+FROM jrottenberg/ffmpeg
+
+WORKDIR /data
+
+ENV PATH /usr/local/python3/bin:$PATH
+
+RUN apt-get update --fix-missing && apt-get install -y wget tar gzip gcc make \
+    zlib1g-dev libbz2-dev libssl-dev libncurses5-dev libsqlite3-dev \
+    libreadline-dev tk-dev libgdbm-dev libdb-dev libpcap-dev xz-utils \
+    libexpat1-dev liblzma-dev libffi-dev libc6-dev \
+    && wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz \
+    && tar -zxvf Python-3.9.1.tgz \
+    && rm -f Python-3.9.1.tgz \
+    && mkdir /usr/local/python3 \
+    && cd Python-3.9.1 \
+    && ./configure --prefix=/usr/local/python3 \
+    && make && make install \
+    && cd .. \
+    && rm -rf Python-3.9.1
+
+ENTRYPOINT [ "bash", "hold" ]

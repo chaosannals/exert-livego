@@ -1,0 +1,47 @@
+version: '3.8'
+
+services: 
+  # 推流端
+  ffmpeg:
+    build:
+      context: ./ffmpeg
+      dockerfile: dockerfile
+    container_name: exert-livego-ffmpeg
+    volumes:
+      - ./ffmpeg:/data
+    working_dir: /data
+    entrypoint: bash hold
+    networks:
+      - exert-livego-net
+
+  # 直播服务器
+  livego:
+    image: gwuhaolin/livego
+    container_name: exert-livego-server
+    ports: 
+      - "1935:1935"
+      - "7001:7001"
+      - "7002:7002"
+      - "8090:8090"
+    networks:
+      - exert-livego-net
+  
+  # 前端服务器
+  flvjs:
+    build: 
+      context: ./flvjs
+      dockerfile: dockerfile
+    container_name: exert-flvjs-server
+    depends_on: 
+      - livego
+    ports: 
+      - "8080:8080"
+    volumes:
+      - ./flvjs:/app
+    networks:
+      - exert-livego-net
+
+networks:
+  exert-livego-net:
+    name: exert-livego-net
+    driver: bridge

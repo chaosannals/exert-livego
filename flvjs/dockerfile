@@ -1,0 +1,11 @@
+FROM ubuntu:20.04
+
+WORKDIR /app
+
+ENV DENO_INSTALL /root/.deno
+ENV PATH $DENO_INSTALL/bin:$PATH
+
+RUN apt-get update && apt-get install -y curl zip unzip \
+    && curl -fsSL https://deno.land/x/install/install.sh | sh
+
+ENTRYPOINT [ "deno", "run", "--allow-all", "app.js" ]
